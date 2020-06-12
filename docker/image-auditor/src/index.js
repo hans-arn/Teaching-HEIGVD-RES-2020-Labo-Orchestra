@@ -1,6 +1,8 @@
 'use strict';
-var dgram = require('dgram');
-var musician = {uuid:"", instrument:"", firstSeen:"", lastSeen:""};
+const dgram = require('dgram');
+const moment = require('moment');
+
+var musician = {uuid:"", instrument:"", ActiveSince: "",firstSeen:"", lastSeen:""};
 var server = dgram.createSocket("udp4");
 const PORT = 20000;
 
@@ -20,23 +22,29 @@ server.bind(PORT, () => {
 });
 
 server.on('message', function(msg, rinfo) {
+console.log(musicians)
 	var tmp = JSON.parse(msg);
 	if(!musicians.has(tmp.uuid)){
-		var now = new Date();
-		var musician = {uuid:tmp.uuid, instrument:typeSound[tmp.sound], firstSeen:now.getTime(), lastSeen:""};
+		var musician = {
+			uuid:tmp.uuid, instrument:typeSound[tmp.sound], ActiveSince: moment().format(), firstSeen:actualtimeSeconds(), lastSeen:actualtimeSeconds()
+		};
+		musicians.set(tmp.uuid,musician);
+	}else{
+		var musician = musicians.get(tmp.uuid)
+		musician.lastSeen = actualtimeSeconds();
 		musicians.set(tmp.uuid,musician);
 	}
 	console.log(musicians)
 });
 
-server.on('error', (err) => {
-	console.log(`server error:\n${err.stack}`);
-	server.close();
-});
-
 server.on('listening', () => {
 	console.log(`server listening`);
 });
+
+function actualtimeSeconds(){
+	var now = new Date();
+	return Math.floor(now.getTime()/1000);
+}
 
 function init(instrument) { 
 	musician.instrument=instrument;
