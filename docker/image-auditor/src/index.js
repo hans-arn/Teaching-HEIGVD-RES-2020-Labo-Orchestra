@@ -22,7 +22,6 @@ server.bind(PORT, () => {
 });
 
 server.on('message', function(msg, rinfo) {
-console.log(musicians)
 	var tmp = JSON.parse(msg);
 	if(!musicians.has(tmp.uuid)){
 		var musician = {
