@@ -5,19 +5,26 @@ var client = dgram.createSocket("udp4");
 const PORT = 20000;
 const MULTICAST_ADDR = "233.255.255.255";
 
+const typeMusician = {
+	piano : 'ti-ta-ti',
+	trumpet : 'pouet',
+	flute : 'trulu',
+	violin : 'gzi-gzi',
+	drum : 'boum-boum'
+}
+
 client.bind(PORT);
 
-
 if (process.argv.length - 2 != 1) {
-  console.error("Too many or too few arguments!");
-  return;
+  	console.error("Too many or too few arguments!");
+  	return;
 }
 
 function sendMessage() {
-  const message = Buffer.from(JSON.stringify(musician,null,"\t"));
-  client.send(message, 0, message.length, PORT, MULTICAST_ADDR, function() {
-    console.info(`Sending message`);
-  });
+  	const message = Buffer.from(JSON.stringify(musician,null,"\t"));
+  	client.send(message, 0, message.length, PORT, MULTICAST_ADDR, function() {
+    	console.info(`Sending message`);
+  	});
 }
 
 function SendMessage(){
@@ -38,23 +45,7 @@ function uuidv4() {
 } 
 
 function init(instrument) { 
-	switch(instrument) {
-	  case "piano":
-	  	musician.sound="ti-ta-ti"
-		break;
-	  case "trumpet":
-	  	musician.sound="pouet"
-		break;
-	  case "flute":
-	  	musician.sound="trulu"
-		break;
-	  case "violin":
-	 	musician.sound="gzi-gzi"
-		break;
-	  case "drum":
-	  	musician.sound="boum-boum"
-		break;
-	} 
+	musician.sound=typeMusician[instrument]
 	musician.instrument=instrument;
 	musician.uuid=uuidv4();
 	SendMessage();
