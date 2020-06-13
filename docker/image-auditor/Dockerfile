@@ -1,8 +1,5 @@
 FROM node:12.16
 
-RUN apt-get update && \ 
-	apt-get install -y vim
-
-CMD ["npm", "install","dgram", "moment","net"]
+CMD ["npm", "install","dgram", "moment","net", "--save"]
 COPY src/ /opt/app/
-ENTRYPOINT ["node", "/opt/app/index.js"]
+CMD ["node", "/opt/app/index.js"]

@@ -120,21 +120,21 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | In a JavaScript program, if we have an object, how can we **serialize it in JSON**? |
-| | var json = JSON.stringify(myObj); |
+| | Pour sérialiser un objet en JSON, j'ai utilisé **JSON.stringify(myObj)**. |
 |Question | What is **npm**?  |
-| | C'est un gestionnaire de paquet pour Node js |
+| | C'est un gestionnaire de paquet pour Node js. |
 |Question | What is the `npm install` command and what is the purpose of the `--save` flag?  |
 | | Cette option permet d'ajouter le paquet installer avec son numéro de version dans la section depencies de `package.json` |
 |Question | How can we use the `https://www.npmjs.com/` web site?  |
-|  | On peut rechercher les paquets dont on a besoin.             |
+|  | On peut rechercher les paquets dont on a besoin ainsi que leurs documenttations respectives. |
 |Question | In JavaScript, how can we **generate a UUID** compliant with RFC4122? |
-| | function uuidv4() {   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {     var r = Math.random() * 16 \| 0, v = c == 'x' ? r : (r & 0x3 \| 0x8);     return v.toString(16);   }); }  console.log(uuidv4()); |
+| | En utilisant le paquage uuid et en appelant sa méthode uuid.v4(). |
 |Question | In Node.js, how can we execute a function on a **periodic** basis? |
-| | setInterval(<function name>, <time>); |
+| | setInterval(<function name>, <time in ms>); |
 |Question | In Node.js, how can we **emit UDP datagrams**? |
-| | https://stackoverflow.com/questions/6177423/send-broadcast-datagram |
+|          | Dans mon implémentation, j'utilise le paquet dgram et je crée une socket. Je me bind sur le port **20000** à l'adresse **233.255.255.255**. Puis j'envoie les données sous format JSON en multicast. |
 |Question | In Node.js, how can we **access the command line arguments**? |
-| | *Enter your response here...*  |
+| | Pour accéder aux arguments passer par la ligne de commande, il faut utiliser **process.argv[2]** qui correspond au premier argument. |
 
 
 ## Task 3: package the "musician" app in a Docker image
@@ -142,17 +142,17 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | How do we **define and build our own Docker image**?|
-| | https://nodejs.org/en/docs/guides/nodejs-docker-webapp/ |
+| |  |
 |Question | How can we use the `ENTRYPOINT` statement in our Dockerfile?  |
-| | *Enter your response here...*  |
+| | On peut l'utiliser de cette manière **ENTRYPOINT ["node", "/opt/app/index.js"]** pour pouvoir exécuter l'application avec des arguments que l'on voudrait lui passer. |
 |Question | After building our Docker image, how do we use it to **run containers**?  |
-| | docker run -d (pour l'exécuter en arrière plan) <docker image name> |
+| | **docker run -d (pour l'exécuter en arrière plan) <docker image name> <argument>** |
 |Question | How do we get the list of all **running containers**?  |
-| | docker ps |
+| | **docker ps** |
 |Question | How do we **stop/kill** one running container?  |
-| | docker kill <docker image name> |
+| | **docker kill <docker image name>** |
 |Question | How can we check that our running containers are effectively sending UDP datagrams?  |
-| | On peut observer le trafic avec wireshark |
+| | On peut observer le trafic avec `wireshark` ou avec `tcpdump`. |
 
 
 ## Task 4: implement an "auditor" Node.js application
