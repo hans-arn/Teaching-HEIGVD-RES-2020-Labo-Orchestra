@@ -27,7 +27,11 @@ server.on('message', function(msg, rinfo) {
 	var tmp = JSON.parse(msg);
 	if(!musicians.has(tmp.uuid)){
 		var musician = {
-			uuid:tmp.uuid, instrument:typeSound[tmp.sound], ActiveSince: moment().format(), firstSeen:actualtimeSeconds(), lastSeen:actualtimeSeconds()
+			uuid:tmp.uuid, 
+			instrument:typeSound[tmp.sound], 
+			ActiveSince: moment().format(), 
+			firstSeen:actualtimeSeconds(), 
+			lastSeen:actualtimeSeconds()
 		};
 		musicians.set(tmp.uuid,musician);
 	}else{
@@ -57,14 +61,15 @@ serverTcp.on('connection', function(sock) {
     //console.log('CONNECTED: ' + sock.remoteAddress + ':' + sock.remotePort);
     let userInfos = new Array();
 	for (let [uuid,m] of musicians.entries()) {
-	  	userInfos.push({
-		  uuid: uuid,
-		  instrument: m.instrument,
-		  activeSince: m.ActiveSince
-		});
-		console.log(m);
+		if(actualtimeSeconds() - m.lastSeen < 5){
+		  	userInfos.push({
+			  uuid: uuid,
+			  instrument: m.instrument,
+			  activeSince: m.ActiveSince
+			});
+		}
 	}
-		
+	console.log(userInfos);
     // Write the data back to all the connected, the client will receive it as data from the server
     sock.write(JSON.stringify(userInfos));
     sock.end();
