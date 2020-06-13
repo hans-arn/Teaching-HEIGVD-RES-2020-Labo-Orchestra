@@ -1,22 +1,6 @@
 # Teaching-HEIGVD-RES-2020-Labo-Orchestra
 
-## Admin
-
-* **You can work in groups of 2 students**.
-* It is up to you if you want to fork this repo, or if you prefer to work in a private repo. However, you have to **use exactly the same directory structure for the validation procedure to work**. 
-* We expect that you will have more issues and questions than with other labs (because we have a left some questions open on purpose). Please ask your questions on Telegram / Teams, so that everyone in the class can benefit from the discussion.
-
-## Objectives
-
-This lab has 4 objectives:
-
-* The first objective is to **design and implement a simple application protocol on top of UDP**. It will be very similar to the protocol presented during the lecture (where thermometers were publishing temperature events in a multicast group and where a station was listening for these events).
-
-* The second objective is to get familiar with several tools from **the JavaScript ecosystem**. You will implement two simple **Node.js** applications. You will also have to search for and use a couple of **npm modules** (i.e. third-party libraries).
-
-* The third objective is to continue practicing with **Docker**. You will have to create 2 Docker images (they will be very similar to the images presented in class). You will then have to run multiple containers based on these images.
-
-* Last but not least, the fourth objective is to **work with a bit less upfront guidance**, as compared with previous labs. This time, we do not provide a complete webcast to get you started, because we want you to search for information (this is a very important skill that we will increasingly train). Don't worry, we have prepared a fairly detailed list of tasks that will put you on the right track. If you feel a bit overwhelmed at the beginning, make sure to read this document carefully and to find answers to the questions asked in the tables. You will see that the whole thing will become more and more approachable.
+> Jérôme Arn 
 
 
 ## Requirements
@@ -104,7 +88,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | --- | --- |
 |Question | How can we represent the system in an **architecture diagram**, which gives information both about the Docker containers, the communication protocols and the commands? |
-| |                                                              |
+| | ![](./images/arch.jpg) |
 |Question | Who is going to **send UDP datagrams** and **when**? |
 | | Les musiciens toutes les secondes pour dire qu'ils jouent. |
 |Question | Who is going to **listen for UDP datagrams** and what should happen when a datagram is received? |
@@ -112,7 +96,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | What **payload** should we put in the UDP datagrams? |
 | | Dans le datagramme UDP il faudra mettre |
 |Question | What **data structures** do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures? |
-| | *Enter your response here...* |
+| | Pour faire la traduction de son à instrument et vice-versa, j'ai utilisé des map. Pour stocker les musiciens d'un autditeur, j'ai utilisé la même structure. Je mets cette liste à jour chaque fois que l'auditeur entend un son et qu'un utilisateur demande la liste des musiciens actifs. Quand l'utilisateur se connectera à l'auditeur pour savoir quels sont les musiciens actifs, l'auditeur va "trier" sa liste de musicien. Par contre dans la map il y a des informations qui ne sont pas utiles à l'utilisateur. on construit un tableau à la volée qu'on lui envoie. |
 
 
 ## Task 2: implement a "musician" Node.js application
@@ -142,15 +126,15 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | How do we **define and build our own Docker image**?|
-| |  |
+| | Tout d'abord on définit un **Dockerfile** avec l'image, les paquets à installer, la copie des fichiers sources dans le container et la commande permettant l'exécution du container. Ensuite on contruit l'image avec la commande **docker build -t res/musician** |
 |Question | How can we use the `ENTRYPOINT` statement in our Dockerfile?  |
-| | On peut l'utiliser de cette manière **ENTRYPOINT ["node", "/opt/app/index.js"]** pour pouvoir exécuter l'application avec des arguments que l'on voudrait lui passer. |
+| | On peut l'utiliser de cette manière **ENTRYPOINT ["node", "/opt/app/index.js"]** pour pouvoir exécuter l'application avec des arguments que l'on voudrait lui passer. Et surtout on peut considérer le container comme un exécutable |
 |Question | After building our Docker image, how do we use it to **run containers**?  |
 | | **docker run -d (pour l'exécuter en arrière plan) <docker image name> <argument>** |
 |Question | How do we get the list of all **running containers**?  |
 | | **docker ps** |
 |Question | How do we **stop/kill** one running container?  |
-| | **docker kill <docker image name>** |
+| | **docker kill <docker image name>** mais pour cela il faut faire un docker ps pour savoir le nom du container que l'on veut stop. |
 |Question | How can we check that our running containers are effectively sending UDP datagrams?  |
 | | On peut observer le trafic avec `wireshark` ou avec `tcpdump`. |
 
@@ -160,15 +144,15 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | ---  |
 |Question | With Node.js, how can we listen for UDP datagrams in a multicast group? |
-| | *Enter your response here...*  |
+|          | On se met en écoute sur le même port et la même adresse que les musiciens. Et quand un event de type message arrive on traite les données. |
 |Question | How can we use the `Map` built-in object introduced in ECMAScript 6 to implement a **dictionary**?  |
-| | *Enter your response here...* |
+| | On définit les sons des instruments comme les clés et on leurs attribuent l'instrument correcpondant comme donnée. |
 |Question | How can we use the `Moment.js` npm module to help us with **date manipulations** and formatting?  |
-| | *Enter your response here...* |
+| | Je l'utilise pour avoir le bon format pour le champ **ActiveSince** que j'affiche à l'utilisateur. |
 |Question | When and how do we **get rid of inactive players**?  |
-| | *Enter your response here...* |
+| | Je stocke mes musiciens dans la map au fur et à mesure qu'ils arrivent. Lorsque le client demande la liste des musiciens actifs, je regarde quels musiciens sont encore actifs (en regardant de quand date leurs derniers sons). Si le dernier son émit est plus vieux que 5 secondes je ne l'envoie pas à l'utilisateur et je le supprime de la map. |
 |Question | How do I implement a **simple TCP server** in Node.js?  |
-| | *Enter your response here...* |
+| | En utilisant le paquet **net** et un event de type **connection**. à noter que je ferme direcement la connexion avec le client après lui avoir envoyé les données. |
 
 
 ## Task 5: package the "auditor" app in a Docker image
@@ -176,7 +160,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | How do we validate that the whole system works, once we have built our Docker image? |
-| | *Enter your response here...* |
+|  | J'ai fait des tests manuels et j'ai exécuter le script **validate.sh** |
 
 
 ## Constraints
