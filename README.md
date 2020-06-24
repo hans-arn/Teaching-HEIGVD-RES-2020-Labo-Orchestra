@@ -94,7 +94,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | Who is going to **listen for UDP datagrams** and what should happen when a datagram is received? |
 | | L'auditeur, il doit détecter via l'UUID du musiciens si cela fait plus que 5 secondes qu'il joue. Si c'est le cas il doit rendre visible le musicien pour l'utilisateur. |
 |Question | What **payload** should we put in the UDP datagrams? |
-| | Dans le datagramme UDP il faudra mettre |
+| | Dans le datagramme UDP il faudra mettre le son produit par le musicien ainsi que son ID pour que l'auditeur puisse le différencier. |
 |Question | What **data structures** do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures? |
 | | Pour faire la traduction de son à instrument et vice-versa, j'ai utilisé des map. Pour stocker les musiciens d'un autditeur, j'ai utilisé la même structure. Je mets cette liste à jour chaque fois que l'auditeur entend un son et qu'un utilisateur demande la liste des musiciens actifs. Quand l'utilisateur se connectera à l'auditeur pour savoir quels sont les musiciens actifs, l'auditeur va "trier" sa liste de musicien. Par contre dans la map il y a des informations qui ne sont pas utiles à l'utilisateur. on construit un tableau à la volée qu'on lui envoie. |
 
@@ -110,11 +110,11 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | What is the `npm install` command and what is the purpose of the `--save` flag?  |
 | | Cette option permet d'ajouter le paquet installer avec son numéro de version dans la section depencies de `package.json` |
 |Question | How can we use the `https://www.npmjs.com/` web site?  |
-|  | On peut rechercher les paquets dont on a besoin ainsi que leurs documenttations respectives. |
+|  | On peut, entre autre, rechercher les paquets dont on a besoin ainsi que leurs documentations respectives. |
 |Question | In JavaScript, how can we **generate a UUID** compliant with RFC4122? |
 | | En utilisant le paquage uuid et en appelant sa méthode uuid.v4(). |
 |Question | In Node.js, how can we execute a function on a **periodic** basis? |
-| | setInterval(<function name>, <time in ms>); |
+| | Avec la donction setInterval(<function name>, <time in ms>); |
 |Question | In Node.js, how can we **emit UDP datagrams**? |
 |          | Dans mon implémentation, j'utilise le paquet dgram et je crée une socket. Je me bind sur le port **20000** à l'adresse **233.255.255.255**. Puis j'envoie les données sous format JSON en multicast. |
 |Question | In Node.js, how can we **access the command line arguments**? |
@@ -126,13 +126,13 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | How do we **define and build our own Docker image**?|
-| | Tout d'abord on définit un **Dockerfile** avec l'image, les paquets à installer, la copie des fichiers sources dans le container et la commande permettant l'exécution du container. Ensuite on contruit l'image avec la commande **docker build -t res/musician** |
+| | Tout d'abord on définit un **Dockerfile** avec l'image, les paquets à installer, la copie des fichiers sources dans le container et la commande permettant l'exécution du container. Ensuite on contruit l'image avec la commande **docker build -t res/musician**. |
 |Question | How can we use the `ENTRYPOINT` statement in our Dockerfile?  |
-| | On peut l'utiliser de cette manière **ENTRYPOINT ["node", "/opt/app/index.js"]** pour pouvoir exécuter l'application avec des arguments que l'on voudrait lui passer. Et surtout on peut considérer le container comme un exécutable |
+| | On peut l'utiliser de cette manière **ENTRYPOINT ["node", "/opt/app/index.js"]** pour pouvoir exécuter l'application avec des arguments que l'on voudrait lui passer. Et surtout on peut considérer le container comme un exécutable. |
 |Question | After building our Docker image, how do we use it to **run containers**?  |
 | | **docker run -d (pour l'exécuter en arrière plan) <docker image name> <argument>** |
 |Question | How do we get the list of all **running containers**?  |
-| | **docker ps** |
+| | avec la commande **docker ps** |
 |Question | How do we **stop/kill** one running container?  |
 | | **docker kill <docker image name>** mais pour cela il faut faire un docker ps pour savoir le nom du container que l'on veut stop. |
 |Question | How can we check that our running containers are effectively sending UDP datagrams?  |
@@ -144,13 +144,13 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | ---  |
 |Question | With Node.js, how can we listen for UDP datagrams in a multicast group? |
-|          | On se met en écoute sur le même port et la même adresse que les musiciens. Et quand un event de type message arrive on traite les données. |
+|          | On se met en écoute sur le même port et la même adresse que les musiciens. Et quand un event de type *message* arrive on traite les données. |
 |Question | How can we use the `Map` built-in object introduced in ECMAScript 6 to implement a **dictionary**?  |
 | | On définit les sons des instruments comme les clés et on leurs attribuent l'instrument correcpondant comme donnée. |
 |Question | How can we use the `Moment.js` npm module to help us with **date manipulations** and formatting?  |
-| | Je l'utilise pour avoir le bon format pour le champ **ActiveSince** que j'affiche à l'utilisateur. |
+| | Je l'utilise pour avoir le bon format pour le champ **ActiveSince** que j'affiche à l'utilisateur dans le JSON. |
 |Question | When and how do we **get rid of inactive players**?  |
-| | Je stocke mes musiciens dans la map au fur et à mesure qu'ils arrivent. Lorsque le client demande la liste des musiciens actifs, je regarde quels musiciens sont encore actifs (en regardant de quand date leurs derniers sons). Si le dernier son émit est plus vieux que 5 secondes je ne l'envoie pas à l'utilisateur et je le supprime de la map. |
+| | Je stocke mes musiciens dans la map au fur et à mesure qu'ils arrivent. Lorsque le client demande la liste des musiciens actifs, je regarde quels musiciens sont encore actifs (en regardant de quand date leurs messages). Si le dernier son émit est plus vieux que 5 secondes je ne l'envoie pas à l'utilisateur et je le supprime de la map. |
 |Question | How do I implement a **simple TCP server** in Node.js?  |
 | | En utilisant le paquet **net** et un event de type **connection**. à noter que je ferme direcement la connexion avec le client après lui avoir envoyé les données. |
 
@@ -160,7 +160,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | How do we validate that the whole system works, once we have built our Docker image? |
-|  | J'ai fait des tests manuels et j'ai exécuter le script **validate.sh** |
+|  | J'ai fait des tests manuels des différents cas de la donnée (arrivée des musiciens, envoit du JSON, départ des musiciens et vérification qu'ils n'apparaissaient plus dans le JSOn après 5 secondes) et j'ai exécuter le script **validate.sh** |
 
 
 ## Constraints
