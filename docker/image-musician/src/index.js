@@ -8,7 +8,7 @@ const PORT = 20000;
 const MULTICAST_ADDR = "233.255.255.255";
 
 // data storage
-var musician = {uuid:uuid.v4(), instrument:"", sound:""};
+var musician = {uuid:uuid.v4(), sound:""};
 const typeMusician = new Map();
 typeMusician.set('piano', 'ti-ta-ti')
 typeMusician.set('trumpet', 'pouet')
@@ -36,5 +36,4 @@ function SendMessage(){
 
 // initialisation avec les arguments docker 
 musician.sound=typeMusician.get(process.argv[2])
-musician.instrument=process.argv[2] ;
 SendMessage();
